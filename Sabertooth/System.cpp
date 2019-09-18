@@ -74,21 +74,21 @@ int System::SystemSetup()
 
 void System::Run()
 {
-
 	coreShader.Use();
-	coreShader.LoadTexture( "bin/Images/woodTexture.jpg", "texture1", "woodTexture" );
+
+	coreShader.LoadTexture( "bin/Images/background.jpg", "texture1", "background" );
 
 	GLfloat vertices[] =
 	{
 		// Positions         // Textures
 
-		 0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // Top Right
-		 0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom Right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Bottom Left
+		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
+		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
 		
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Bottom Left
-		-0.5f,  0.5f, 0.0f,   0.0f, 1.0f, // Top Left
-		 0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // Top Right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+		-1.0f,  1.0f, 0.0f,   0.0f, 1.0f, // Top Left
+		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
 	};
 
 	GLuint VBO, VAO;
@@ -111,6 +111,7 @@ void System::Run()
 
 	glBindVertexArray( 0 ); // Unbind VAO
 	
+	GLfloat offsetx=0, offsety=0, z=0;
 	while ( !glfwWindowShouldClose( window ) ) {
 
 		glfwPollEvents();
@@ -123,14 +124,28 @@ void System::Run()
 
 #pragma endregion
 
-		glClearColor( 0.2f, 0.3f, 0.3f, 1.0f );
+		//glClearColor( 0.2f, 0.3f, 0.3f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		coreShader.Use();
 
-		coreShader.UseTexture( "woodTexture" );
 
-		glBindVertexArray( VAO );
+		glBindVertexArray(VAO); 
+		for (int i = 0; i < 1; i++) {     // Caso necessário ou conforme evento, deslocar camada 
+			offsetx += 0.0002;
+			glUniform1f(      
+				glGetUniformLocation(coreShader.getProgram(), "offsetx"), offsetx);
+		    glUniform1f(      
+				glGetUniformLocation(coreShader.getProgram(), "offsety"), offsety);
+			glUniform1f(      
+				glGetUniformLocation(coreShader.getProgram(), "layer_z"), z);
+			// bind Texture
+			glActiveTexture(GL_TEXTURE0);
+			coreShader.Use();
+			coreShader.UseTexture("background");
+			glUniform1i(glGetUniformLocation(coreShader.getProgram(), "sprite"), 0);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		}
+
 		glDrawArrays( GL_TRIANGLES, 0, 6 );
 		glBindVertexArray( 0 );
 		

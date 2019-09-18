@@ -132,6 +132,9 @@ public:
 
 	void UseTexture( std::string textureName );
 	void LoadTexture( char* path, char* textureUniformName, std::string textureName );
+	int getProgram() {
+		return this->program;
+	}
 
 };
 

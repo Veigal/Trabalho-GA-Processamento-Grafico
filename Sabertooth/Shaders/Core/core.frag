@@ -12,5 +12,8 @@ void main(){
     
 	vec4 tex1 = texture( 
 		texture1, vec2(TexCoord.x + offsetx, TexCoord.y));
+	if( tex1.a < 0.5) {
+		discard;
+	}
 	color = tex1;
 }

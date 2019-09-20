@@ -1,5 +1,7 @@
 ﻿  System.cpp
-C:\Users\leove\Documents\Fontes\ProcessamentoGráfico\Sabertooth\Sabertooth\Sabertooth\System.cpp(134,21): warning C4305:  '+=': truncation from 'double' to 'GLfloat'
+C:\Users\leove\Documents\Fontes\ProcessamentoGráfico\Sabertooth\Sabertooth\Sabertooth\System.cpp(157,56): warning C4305:  'initializing': truncation from 'double' to 'GLfloat'
+C:\Users\leove\Documents\Fontes\ProcessamentoGráfico\Sabertooth\Sabertooth\Sabertooth\System.cpp(178,22): warning C4305:  '+=': truncation from 'double' to 'GLfloat'
+C:\Users\leove\Documents\Fontes\ProcessamentoGráfico\Sabertooth\Sabertooth\Sabertooth\System.cpp(183,22): warning C4305:  '+=': truncation from 'double' to 'GLfloat'
   SOIL.lib(SOIL.obj) : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
 LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library

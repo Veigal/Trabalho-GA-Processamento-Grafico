@@ -74,9 +74,6 @@ int System::SystemSetup()
 
 void System::Run()
 {
-	coreShader.Use();
-
-	coreShader.LoadTexture( "bin/Images/background.jpg", "texture1", "background" );
 
 	GLfloat vertices[] =
 	{
@@ -85,11 +82,29 @@ void System::Run()
 		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
 		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
 		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
-		
+
 		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
 		-1.0f,  1.0f, 0.0f,   0.0f, 1.0f, // Top Left
 		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
 	};
+
+	GLfloat vertices1[] =
+	{
+		// Positions         // Textures
+
+		 1.0f,  1.0f, 0.0f,   0.7f, 2.0f, // Top Right
+		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+		-1.0f,  1.0f, 0.0f,   0.0f, 2.0f, // Top Left
+		 1.0f,  1.0f, 0.0f,   0.7f, 2.0f, // Top Right
+	};
+
+	coreShader.Use();
+
+	coreShader.LoadTexture( "bin/Images/Grama.png", "texture1", "background" );
+
 
 	GLuint VBO, VAO;
 	glGenVertexArrays( 1, &VAO );
@@ -110,8 +125,36 @@ void System::Run()
 	glEnableVertexAttribArray( 1 );
 
 	glBindVertexArray( 0 ); // Unbind VAO
-	
-	GLfloat offsetx=0, offsety=0, z=0;
+
+
+//teste
+	coreShader.Use();
+
+	coreShader.LoadTexture("bin/Images/grama.jpg", "texture2", "grama");
+
+
+	GLuint VBO1, VAO1;
+	glGenVertexArrays(1, &VAO1);
+	glGenBuffers(1, &VBO1);
+
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+	glBindVertexArray(VAO1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// Texture attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0); // Unbind VAO
+//teste
+
+	GLfloat offsetx = 0, offsety = 0, z[2] = { -0.1, -0.2 };
 	while ( !glfwWindowShouldClose( window ) ) {
 
 		glfwPollEvents();
@@ -129,19 +172,34 @@ void System::Run()
 
 
 
-		glBindVertexArray(VAO); 
-		for (int i = 0; i < 1; i++) {     // Caso necessário ou conforme evento, deslocar camada 
-			offsetx += 0.0002;
+		for (int i = 0; i < 2; i++) {     // Caso necessário ou conforme evento, deslocar camada 
+			if (i == 0) {
+				glBindVertexArray(VAO); 
+				offsetx += 0.0002;
+
+			}
+			else {
+				glBindVertexArray(VAO1);
+				offsetx += 0.0005;
+
+			}
+
 			glUniform1f(      
 				glGetUniformLocation(coreShader.getProgram(), "offsetx"), offsetx);
 		    glUniform1f(      
 				glGetUniformLocation(coreShader.getProgram(), "offsety"), offsety);
 			glUniform1f(      
-				glGetUniformLocation(coreShader.getProgram(), "layer_z"), z);
+				glGetUniformLocation(coreShader.getProgram(), "layer_z"), z[i]);
 			// bind Texture
-			glActiveTexture(GL_TEXTURE0);
 			coreShader.Use();
-			coreShader.UseTexture("background");
+			if (i == 0) {
+				glActiveTexture(GL_TEXTURE0);
+				coreShader.UseTexture("background");
+			}
+			else {
+				glActiveTexture(GL_TEXTURE1);
+				coreShader.UseTexture("grama");
+			}
 			glUniform1i(glGetUniformLocation(coreShader.getProgram(), "sprite"), 0);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		}

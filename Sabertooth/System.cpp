@@ -75,21 +75,7 @@ int System::SystemSetup()
 void System::Run()
 {
 
-
-	GLfloat vertices[] =
-	{
-		// Positions         // Textures
-
-		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
-		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
-
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
-		-1.0f,  1.0f, 0.0f,   0.0f, 4.0f, // Top Left
-		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
-	};
-
-	GLfloat vertices1[] =
+	GLfloat vertices0[] =
 	{
 		// Positions         // Textures
 
@@ -102,20 +88,76 @@ void System::Run()
 		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
 	};
 
+	GLfloat vertices1[] =
+	{
+		// Positions         // Textures
+
+		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
+		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+		-1.0f,  1.0f, 0.0f,   0.0f, 4.0f, // Top Left
+		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
+	};
+
+	GLfloat vertices2[] =
+	{
+		// Positions         // Textures
+
+		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
+		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+		-1.0f,  1.0f, 0.0f,   0.0f, 1.0f, // Top Left
+		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
+	};
+
+
+	//Carro
+	coreShader.Use();
+
+	coreShader.LoadTexture("bin/Images/carro.png", "texture0", "carro");
+
+
+	GLuint VBO0, VAO0;
+	glGenVertexArrays(1, &VAO0);
+	glGenBuffers(1, &VBO0);
+
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+	glBindVertexArray(VAO0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices0), vertices0, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// Texture attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0); // Unbind VAO
+
+
+
+	//Grama
 	coreShader.Use();
 
 	coreShader.LoadTexture("bin/Images/grama.png", "texture1", "grama");
 
 
-	GLuint VBO, VAO;
-	glGenVertexArrays( 1, &VAO );
-	glGenBuffers( 1, &VBO );
+	GLuint VBO1, VAO1;
+	glGenVertexArrays( 1, &VAO1 );
+	glGenBuffers( 1, &VBO1 );
 
 	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-	glBindVertexArray( VAO );
+	glBindVertexArray( VAO1 );
 
-	glBindBuffer( GL_ARRAY_BUFFER, VBO );
-	glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, GL_STATIC_DRAW );
+	glBindBuffer( GL_ARRAY_BUFFER, VBO1 );
+	glBufferData( GL_ARRAY_BUFFER, sizeof( vertices1 ), vertices1, GL_STATIC_DRAW );
 
 	// Position attribute
 	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof( GLfloat ), ( GLvoid * ) 0 );
@@ -128,22 +170,22 @@ void System::Run()
 	glBindVertexArray( 0 ); // Unbind VAO
 
 
-//teste
+	//Background
 	coreShader.Use();
 
 	coreShader.LoadTexture("bin/Images/background.jpg", "texture2", "background");
 
 
 
-	GLuint VBO1, VAO1;
-	glGenVertexArrays(1, &VAO1);
-	glGenBuffers(1, &VBO1);
+	GLuint VBO2, VAO2;
+	glGenVertexArrays(1, &VAO2);
+	glGenBuffers(1, &VBO2);
 
 	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-	glBindVertexArray(VAO1);
+	glBindVertexArray(VAO2);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
 
 	// Position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
@@ -156,7 +198,7 @@ void System::Run()
 	glBindVertexArray(0); // Unbind VAO
 //teste
 
-	GLfloat offsetx[2] = { 0,0 }, offsety[2] = {0,0}, z[2] = { 1.0, 1.0 };
+	GLfloat offsetx[3] = { 0,0,0 }, offsety[3] = {0,0,0}, z[3] = { 1.0, 1.0,1.0 };
 	while ( !glfwWindowShouldClose( window ) ) {
 
 		glfwPollEvents();
@@ -174,17 +216,27 @@ void System::Run()
 
 
 
-		for (int i = 0; i < 2; i++) {     // Caso necessário ou conforme evento, deslocar camada 
-			if (i == 0) {
-				glBindVertexArray(VAO); 
+		for (int i = 0; i < 3; i++) {     // Caso necessário ou conforme evento, deslocar camada 
+			coreShader.Use();
+			switch (i)
+			{
+			case 0:
+				glBindVertexArray(VAO0);
 				offsetx[i] += 0.001;
-
-			}
-			else {
+				coreShader.UseTexture("carro");
+				break;
+			case 1:
 				glBindVertexArray(VAO1);
+				offsetx[i] += 0.001;
+				coreShader.UseTexture("grama");
+				break;
+			case 2:
+				glBindVertexArray(VAO2);
 				offsetx[i] += 0.00005;
-
+				coreShader.UseTexture("background");
+				break;
 			}
+
 
 			glUniform1f(      
 				glGetUniformLocation(coreShader.getProgram(), "offsetx"), offsetx[i]);
@@ -195,15 +247,17 @@ void System::Run()
 			glUniform1f(
 				glGetUniformLocation(coreShader.getProgram(), "id"), i);
 			// bind Texture
+			/*
 			coreShader.Use();
 			if (i == 0) {
 				//glActiveTexture(GL_TEXTURE0);
-				coreShader.UseTexture("background");
+				coreShader.UseTexture("grama");
 			}
 			else {
 				//glActiveTexture(GL_TEXTURE1);
-				coreShader.UseTexture("grama");
+				coreShader.UseTexture("background");
 			}
+			*/
 			glUniform1i(glGetUniformLocation(coreShader.getProgram(), "sprite"), 0);
 			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 			glDrawArrays( GL_TRIANGLES, 0, 6 );

@@ -75,7 +75,21 @@ int System::SystemSetup()
 void System::Run()
 {
 
+
 	GLfloat vertices[] =
+	{
+		// Positions         // Textures
+
+		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
+		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+		-1.0f,  1.0f, 0.0f,   0.0f, 4.0f, // Top Left
+		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
+	};
+
+	GLfloat vertices1[] =
 	{
 		// Positions         // Textures
 
@@ -88,22 +102,9 @@ void System::Run()
 		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
 	};
 
-	GLfloat vertices1[] =
-	{
-		// Positions         // Textures
-
-		 1.0f,  1.0f, 0.0f,   0.7f, 2.0f, // Top Right
-		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
-
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
-		-1.0f,  1.0f, 0.0f,   0.0f, 2.0f, // Top Left
-		 1.0f,  1.0f, 0.0f,   0.7f, 2.0f, // Top Right
-	};
-
 	coreShader.Use();
 
-	coreShader.LoadTexture( "bin/Images/Grama.png", "texture1", "background" );
+	coreShader.LoadTexture("bin/Images/grama.png", "texture1", "grama");
 
 
 	GLuint VBO, VAO;
@@ -130,7 +131,8 @@ void System::Run()
 //teste
 	coreShader.Use();
 
-	coreShader.LoadTexture("bin/Images/grama.jpg", "texture2", "grama");
+	coreShader.LoadTexture("bin/Images/background.jpg", "texture2", "background");
+
 
 
 	GLuint VBO1, VAO1;
@@ -154,7 +156,7 @@ void System::Run()
 	glBindVertexArray(0); // Unbind VAO
 //teste
 
-	GLfloat offsetx = 0, offsety = 0, z[2] = { -0.1, -0.2 };
+	GLfloat offsetx[2] = { 0,0 }, offsety[2] = {0,0}, z[2] = { 1.0, 1.0 };
 	while ( !glfwWindowShouldClose( window ) ) {
 
 		glfwPollEvents();
@@ -175,36 +177,38 @@ void System::Run()
 		for (int i = 0; i < 2; i++) {     // Caso necessário ou conforme evento, deslocar camada 
 			if (i == 0) {
 				glBindVertexArray(VAO); 
-				offsetx += 0.0002;
+				offsetx[i] += 0.001;
 
 			}
 			else {
 				glBindVertexArray(VAO1);
-				offsetx += 0.0005;
+				offsetx[i] += 0.00005;
 
 			}
 
 			glUniform1f(      
-				glGetUniformLocation(coreShader.getProgram(), "offsetx"), offsetx);
+				glGetUniformLocation(coreShader.getProgram(), "offsetx"), offsetx[i]);
 		    glUniform1f(      
-				glGetUniformLocation(coreShader.getProgram(), "offsety"), offsety);
+				glGetUniformLocation(coreShader.getProgram(), "offsety"), offsetx[i]);
 			glUniform1f(      
 				glGetUniformLocation(coreShader.getProgram(), "layer_z"), z[i]);
+			glUniform1f(
+				glGetUniformLocation(coreShader.getProgram(), "id"), i);
 			// bind Texture
 			coreShader.Use();
 			if (i == 0) {
-				glActiveTexture(GL_TEXTURE0);
+				//glActiveTexture(GL_TEXTURE0);
 				coreShader.UseTexture("background");
 			}
 			else {
-				glActiveTexture(GL_TEXTURE1);
+				//glActiveTexture(GL_TEXTURE1);
 				coreShader.UseTexture("grama");
 			}
 			glUniform1i(glGetUniformLocation(coreShader.getProgram(), "sprite"), 0);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glDrawArrays( GL_TRIANGLES, 0, 6 );
 		}
 
-		glDrawArrays( GL_TRIANGLES, 0, 6 );
 		glBindVertexArray( 0 );
 		
 

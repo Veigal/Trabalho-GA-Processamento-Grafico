@@ -18,3 +18,4 @@ void Shader::LoadTexture( char* path, char* textureUniformName, std::string text
 	textures[textureName] = tempTexture;
 	textureQtd += 1;
 }
+

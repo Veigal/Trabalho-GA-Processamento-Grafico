@@ -1,5 +1,5 @@
 #include "System.h"
-
+#include <GLFW/glfw3.h>
 
 
 System::System()
@@ -74,21 +74,46 @@ int System::SystemSetup()
 
 void System::Run()
 {
+	GLfloat topy = -0.5;
+	GLfloat boty = topy - 0.15;
+	GLfloat topx = 0.5;
+	GLfloat botx = topx - 0.15;
 
-	GLfloat vertices0[] =
+
+	GLfloat verticesHidrante[] =
 	{
 		// Positions         // Textures
 
-		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
-		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+		 topx, topy, 0.0f,   1.0f, 1.0f, // Top Right
+		 topx, boty, 0.0f,   1.0f, 0.0f, // Bottom Right
+		 botx, boty, 0.0f,   0.0f, 0.0f, // Bottom Left
 
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
-		-1.0f,  1.0f, 0.0f,   0.0f, 1.0f, // Top Left
-		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
+		 botx, boty, 0.0f,   0.0f, 0.0f, // Bottom Left
+		 botx, topy, 0.0f,   0.0f, 1.0f, // Top Left
+		 topx, topy, 0.0f,   1.0f, 1.0f, // Top Right
 	};
 
-	GLfloat vertices1[] =
+
+	topy = -0.405;
+	boty = topy - 0.25;
+	topx = 0.0;
+	botx = topx - 0.5;
+
+
+	GLfloat verticesCarro[] =
+	{
+		// Positions         // Textures
+
+		 topx, topy, 0.0f,   0.5f, 1.0f, // Top Right
+		 topx, boty, 0.0f,   0.5f, 0.75f, // Bottom Right
+		 botx, boty, 0.0f,   0.0f, 0.75f, // Bottom Left
+
+		 botx, boty, 0.0f,   0.0f, 0.75f, // Bottom Left
+		 botx, topy, 0.0f,   0.0f, 1.0f, // Top Left
+		 topx, topy, 0.0f,   0.5f, 1.0f, // Top Right
+	};
+
+	GLfloat verticesGrama[] =
 	{
 		// Positions         // Textures
 
@@ -101,7 +126,7 @@ void System::Run()
 		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
 	};
 
-	GLfloat vertices2[] =
+	GLfloat verticesBackground[] =
 	{
 		// Positions         // Textures
 
@@ -115,21 +140,49 @@ void System::Run()
 	};
 
 
+	//
+	coreShader.Use();
+
+	coreShader.LoadTexture("bin/Images/hidrante.png", "texture3", "hidrante");
+
+
+	GLuint VBOHidrante, VAOHidrante;
+	glGenVertexArrays(1, &VAOHidrante);
+	glGenBuffers(1, &VBOHidrante);
+
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+	glBindVertexArray(VAOHidrante);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHidrante);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesHidrante), verticesHidrante, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// Texture attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0); // Unbind VAO
+
+
+
 	//Carro
 	coreShader.Use();
 
 	coreShader.LoadTexture("bin/Images/carro.png", "texture0", "carro");
 
 
-	GLuint VBO0, VAO0;
-	glGenVertexArrays(1, &VAO0);
-	glGenBuffers(1, &VBO0);
+	GLuint VBOCarro, VAOCarro;
+	glGenVertexArrays(1, &VAOCarro);
+	glGenBuffers(1, &VBOCarro);
 
 	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-	glBindVertexArray(VAO0);
+	glBindVertexArray(VAOCarro);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO0);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices0), vertices0, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOCarro);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCarro), verticesCarro, GL_STATIC_DRAW);
 
 	// Position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
@@ -149,15 +202,15 @@ void System::Run()
 	coreShader.LoadTexture("bin/Images/grama.png", "texture1", "grama");
 
 
-	GLuint VBO1, VAO1;
-	glGenVertexArrays( 1, &VAO1 );
-	glGenBuffers( 1, &VBO1 );
+	GLuint VBOGrama, VAOGrama;
+	glGenVertexArrays( 1, &VAOGrama );
+	glGenBuffers( 1, &VBOGrama );
 
 	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-	glBindVertexArray( VAO1 );
+	glBindVertexArray( VAOGrama );
 
-	glBindBuffer( GL_ARRAY_BUFFER, VBO1 );
-	glBufferData( GL_ARRAY_BUFFER, sizeof( vertices1 ), vertices1, GL_STATIC_DRAW );
+	glBindBuffer( GL_ARRAY_BUFFER, VBOGrama );
+	glBufferData( GL_ARRAY_BUFFER, sizeof( verticesGrama ), verticesGrama, GL_STATIC_DRAW );
 
 	// Position attribute
 	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof( GLfloat ), ( GLvoid * ) 0 );
@@ -177,15 +230,15 @@ void System::Run()
 
 
 
-	GLuint VBO2, VAO2;
-	glGenVertexArrays(1, &VAO2);
-	glGenBuffers(1, &VBO2);
+	GLuint VBOBackground, VAOBackground;
+	glGenVertexArrays(1, &VAOBackground);
+	glGenBuffers(1, &VBOBackground);
 
 	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-	glBindVertexArray(VAO2);
+	glBindVertexArray(VAOBackground);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOBackground);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesBackground), verticesBackground, GL_STATIC_DRAW);
 
 	// Position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
@@ -198,7 +251,7 @@ void System::Run()
 	glBindVertexArray(0); // Unbind VAO
 //teste
 
-	GLfloat offsetx[3] = { 0,0,0 }, offsety[3] = {0,0,0}, z[3] = { 1.0, 1.0,1.0 };
+	GLfloat offsetx[4] = { 0,0,0,0 }, offsety[4] = {0,0,0,0}, z[4] = { 1.0, 1.0,1.0,1.0 }, k=0;
 	while ( !glfwWindowShouldClose( window ) ) {
 
 		glfwPollEvents();
@@ -216,22 +269,53 @@ void System::Run()
 
 
 
-		for (int i = 0; i < 3; i++) {     // Caso necessário ou conforme evento, deslocar camada 
+		for (int i = 0; i < 4; i++) {     // Caso necessário ou conforme evento, deslocar camada 
 			coreShader.Use();
+			
+			//Controla a posição do hidrante
+			if (i == 0) {
+				k -= 0.001;
+				glm::mat4 transform = glm::mat4(1.0f);
+				transform = glm::translate(transform, glm::vec3(k, 0.0f, 0.0f));
+				//transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 0.0f));
+				//Onde é montada a matriz de translação
+				glUseProgram(coreShader.getProgram());
+				glUniformMatrix4fv((glGetUniformLocation(coreShader.getProgram(), "matrix")), 1, GL_FALSE, glm::value_ptr(transform));
+
+				//Checa a colisão e caso colidiu volta para o início da tela
+				if ((0.45+k)<=0) {
+					k=0.5;
+				}
+
+			}
+			else {
+				//Controla a posição dos demais objetos (sempre parados)
+				glm::mat4 transform = glm::mat4(1.0f);
+				glUseProgram(coreShader.getProgram());
+				glUniformMatrix4fv((glGetUniformLocation(coreShader.getProgram(), "matrix")), 1, GL_FALSE, glm::value_ptr(transform));
+
+			}
 			switch (i)
 			{
 			case 0:
-				glBindVertexArray(VAO0);
-				offsetx[i] += 0.001;
-				coreShader.UseTexture("carro");
+
+
+				glBindVertexArray(VAOHidrante);
+				offsetx[i] += 0;
+				coreShader.UseTexture("hidrante");
 				break;
 			case 1:
-				glBindVertexArray(VAO1);
+				glBindVertexArray(VAOCarro);
+				offsetx[i] += 0.5;
+				coreShader.UseTexture("carro");
+				break;
+			case 2:
+				glBindVertexArray(VAOGrama);
 				offsetx[i] += 0.001;
 				coreShader.UseTexture("grama");
 				break;
-			case 2:
-				glBindVertexArray(VAO2);
+			case 3:
+				glBindVertexArray(VAOBackground);
 				offsetx[i] += 0.00005;
 				coreShader.UseTexture("background");
 				break;

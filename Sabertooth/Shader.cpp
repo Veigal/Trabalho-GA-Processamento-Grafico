@@ -16,6 +16,6 @@ void Shader::LoadTexture( char* path, char* textureUniformName, std::string text
 	Texture tempTexture;
 	tempTexture.Load( path, textureUniformName, program, textureQtd );
 	textures[textureName] = tempTexture;
-	textureQtd += 1;
+	//textureQtd += 1;
 }
 

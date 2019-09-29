@@ -1,10 +1,15 @@
 #include "System.h"
 #include <GLFW/glfw3.h>
 
-#define CAMADA_HIDRANTE 0
+#define CAMADA_GAMEOVER 0
+#define CAMADA_PONTOS1 CAMADA_GAMEOVER +1
+#define CAMADA_PONTOS2 CAMADA_PONTOS1 +1
+#define CAMADA_PONTOS3 CAMADA_PONTOS2 +1
+#define CAMADA_HIDRANTE CAMADA_PONTOS3 +1
 #define CAMADA_CARRO CAMADA_HIDRANTE +1
 #define CAMADA_ASFALTO CAMADA_CARRO +1
 #define CAMADA_BACKGROUND CAMADA_ASFALTO +1
+
 
 System::System()
 {
@@ -79,10 +84,61 @@ int System::SystemSetup()
 void System::Run()
 {
 
-	GLfloat topy = -0.51;
+
+
+	GLfloat verticesGameover[] =
+	{
+		// Positions         // Textures
+
+		 1.0f,  1.0f, 0.0f,   1.0f, 1.0f, // Top Right
+		 1.0f, -1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
+		-1.0f,  1.0f, 0.0f,   0.0f, 1.0f, // Top Left
+		 1.0f,  1.0f, 0.0f,   1.0f, 1.0f, // Top Right
+	};
+
+	GLfloat topy = 1;
 	GLfloat boty = topy - 0.12;
-	GLfloat topx = 0.5;
-	GLfloat botx = topx - (topy - boty)*0.75;
+	GLfloat topx = 1;
+	GLfloat botx = topx - (topy - boty) * 0.75; 
+
+	GLfloat verticesPontos1[] =
+	{
+		// Positions         // Textures
+
+		 topx, topy, 0.0f,   0.2f, 1.0f, // Top Right
+		 topx, boty, 0.0f,   0.2f, 0.5f, // Bottom Right
+		 botx, boty, 0.0f,   0.0f, 0.5f, // Bottom Left
+
+		 botx, boty, 0.0f,   0.0f, 0.5f, // Bottom Left
+		 botx, topy, 0.0f,   0.0f, 1.0f, // Top Left
+		 topx, topy, 0.0f,   0.2f, 1.0f, // Top Right
+	};
+
+	topy = 1;
+	boty = topy - 0.12;
+	topx = 0.9;
+	botx = topx - (topy - boty) * 0.75;
+
+	GLfloat verticesPontos2[] =
+	{
+		// Positions         // Textures
+
+		 topx, topy, 0.0f,   0.2f, 1.0f, // Top Right
+		 topx, boty, 0.0f,   0.2f, 0.5f, // Bottom Right
+		 botx, boty, 0.0f,   0.0f, 0.5f, // Bottom Left
+
+		 botx, boty, 0.0f,   0.0f, 0.5f, // Bottom Left
+		 botx, topy, 0.0f,   0.0f, 1.0f, // Top Left
+		 topx, topy, 0.0f,   0.2f, 1.0f, // Top Right
+	};
+
+	topy = -0.51;
+	boty = topy - 0.12;
+	topx = 0.5;
+	botx = topx - (topy - boty)*0.75;
 
 
 	GLfloat verticesHidrante[] =
@@ -97,6 +153,7 @@ void System::Run()
 		 botx, topy, 0.0f,   0.0f, 1.0f, // Top Left
 		 topx, topy, 0.0f,   1.0f, 1.0f, // Top Right
 	};
+
 
 
 	topy = -0.405;
@@ -145,7 +202,90 @@ void System::Run()
 	};
 
 
-	//
+
+	//Pontos2
+	coreShader.Use();
+
+	coreShader.LoadTexture("bin/Images/numeros.png", "texture6", "pontos2");
+
+
+	GLuint VBOPontos2, VAOPontos2;
+	glGenVertexArrays(1, &VAOPontos2);
+	glGenBuffers(1, &VBOPontos2);
+
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+	glBindVertexArray(VAOPontos2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOPontos2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesPontos2), verticesPontos2, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// Texture attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0); // Unbind VAO
+
+
+	//Pontos1
+	coreShader.Use();
+
+	coreShader.LoadTexture("bin/Images/numeros.png", "texture5", "pontos1");
+
+
+	GLuint VBOPontos1, VAOPontos1;
+	glGenVertexArrays(1, &VAOPontos1);
+	glGenBuffers(1, &VBOPontos1);
+
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+	glBindVertexArray(VAOPontos1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOPontos1);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesPontos1), verticesPontos1, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// Texture attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0); // Unbind VAO
+
+
+	//Gameover
+	coreShader.Use();
+
+	coreShader.LoadTexture("bin/Images/gameover.png", "texture4", "gameover");
+
+
+	GLuint VBOGameover, VAOGameover;
+	glGenVertexArrays(1, &VAOGameover);
+	glGenBuffers(1, &VBOGameover);
+
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+	glBindVertexArray(VAOGameover);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOGameover);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesGameover), verticesGameover, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// Texture attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0); // Unbind VAO
+
+
+
+	//Hidrante
 	coreShader.Use();
 
 	coreShader.LoadTexture("bin/Images/hidranteok.png", "texture3", "hidrante");
@@ -258,8 +398,9 @@ void System::Run()
 
 
 	static double previousSeconds, elapsedSeconds;
-	GLboolean spacePressed = false;
-	GLfloat offsetx[CAMADA_BACKGROUND+1] = { 0,0,0,0 }, offsety[CAMADA_BACKGROUND+1] = {0,0,0,0}, z[CAMADA_BACKGROUND+1] = { 1.0, 1.0,1.0,1.0 }, k=0;
+	GLboolean spacePressed = false, colidiu = false;
+	int pontuacao = 0;
+	GLfloat offsetx[CAMADA_BACKGROUND+1] = { 0,0,0,0,0,0,0,0 }, offsety[CAMADA_BACKGROUND+1] = { 0,0,0,0,0,0,0,0 }, z[CAMADA_BACKGROUND+1] = { 1.0, 1.0,1.0,1.0,1.0,1.0,1.0,1.0 }, k=0;
 	while ( !glfwWindowShouldClose( window ) ) {
 
 		glfwPollEvents();
@@ -272,33 +413,34 @@ void System::Run()
 
 		
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !spacePressed) {
-			offsetx[1] = 0.5;
+			offsetx[CAMADA_CARRO] = 0.5;
 			previousSeconds = glfwGetTime();
 			spacePressed = true;
+			pontuacao++;
 		}
 
 		elapsedSeconds = glfwGetTime() - previousSeconds;
 		if (spacePressed) {
 			if (elapsedSeconds >= 2) {
 				spacePressed = false;
-				offsetx[1] = 0.0;
-				offsety[1] = 0.0;
+				offsetx[CAMADA_CARRO] = 0.0;
+				offsety[CAMADA_CARRO] = 0.0;
 			}
 			else {
 				if (elapsedSeconds >= 0.5) {
-					offsety[1] = 0.5;
-					offsetx[1] = 0.5;
+					offsety[CAMADA_CARRO] = 0.5;
+					offsetx[CAMADA_CARRO] = 0.5;
 				}
 				else {
 					if (elapsedSeconds >= 0.2) {
-						offsety[1] = 0.75;
-						offsetx[1] = 0.5;
+						offsety[CAMADA_CARRO] = 0.75;
+						offsetx[CAMADA_CARRO] = 0.5;
 
 					}
 					else {
 						if (elapsedSeconds >= 0.1) {
-							offsety[1] = 0.25;
-							offsetx[1] = 0.5;
+							offsety[CAMADA_CARRO] = 0.25;
+							offsetx[CAMADA_CARRO] = 0.5;
 
 						}
 						else {
@@ -318,8 +460,6 @@ void System::Run()
 		for (int i = 0; i < CAMADA_BACKGROUND+1; i++) {     // Caso necessário ou conforme evento, deslocar camada 
 			coreShader.Use();
 			
-
-
 			//Controla a posição do hidrante
 			if (i == CAMADA_HIDRANTE) {
 				k -= 0.005;
@@ -333,6 +473,7 @@ void System::Run()
 				//Checa a colisão e caso colidiu volta para o início da tela
 				if ((0.45+k)<=0 && (0.45 + k) >= -0.2 && !spacePressed) {
 					k=0.5;
+					colidiu = true;
 				}
 				if ((0.45 + k) <= -1.0) {
 					k = 0.5;
@@ -345,19 +486,19 @@ void System::Run()
 				glUniformMatrix4fv((glGetUniformLocation(coreShader.getProgram(), "matrix")), 1, GL_FALSE, glm::value_ptr(transform));
 
 			}
+
 			switch (i)
 			{
 			case CAMADA_HIDRANTE:
-
-
 				glBindVertexArray(VAOHidrante);
 				offsetx[i] += 0;
 				coreShader.UseTexture("hidrante");
 				break;
 			case CAMADA_CARRO:
-				glBindVertexArray(VAOCarro);
-				
-				coreShader.UseTexture("carro");
+				if (!colidiu) {
+					glBindVertexArray(VAOCarro);
+					coreShader.UseTexture("carro");
+				}
 				break;
 			case CAMADA_ASFALTO:
 				glBindVertexArray(VAOAsfalto);
@@ -368,6 +509,42 @@ void System::Run()
 				glBindVertexArray(VAOBackground);
 				offsetx[i] += 0.00005;
 				coreShader.UseTexture("background");
+				break;
+			case CAMADA_GAMEOVER:
+				if (colidiu) {
+					glBindVertexArray(VAOGameover);
+					offsetx[i] = 0;
+					offsety[i] = 0;
+					coreShader.UseTexture("gameover");
+				}
+				break;
+			case CAMADA_PONTOS1:
+				glBindVertexArray(VAOPontos1);
+
+				if ((pontuacao % 10) >= 5) {
+					offsety[i] = 0.5;
+					offsetx[i] = (pontuacao % 10 - 5) * 0.2;
+				}
+				else {
+					offsety[i] = 0.0;
+					offsetx[i] = (pontuacao % 10) * 0.2;
+				}
+
+				coreShader.UseTexture("pontos1");
+				break;
+			case CAMADA_PONTOS2:
+				glBindVertexArray(VAOPontos2);
+
+				if ((pontuacao / 10) >= 5) {
+					offsety[i] = 0.5;
+					offsetx[i] = (pontuacao / 10 - 5) * 0.2;
+				}
+				else {
+					offsety[i] = 0.0;
+					offsetx[i] = (pontuacao / 10) * 0.2;
+				}
+
+				coreShader.UseTexture("pontos2");
 				break;
 			}
 

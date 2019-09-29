@@ -1,6 +1,10 @@
 #include "System.h"
 #include <GLFW/glfw3.h>
 
+#define CAMADA_HIDRANTE 0
+#define CAMADA_CARRO CAMADA_HIDRANTE +1
+#define CAMADA_ASFALTO CAMADA_CARRO +1
+#define CAMADA_BACKGROUND CAMADA_ASFALTO +1
 
 System::System()
 {
@@ -74,10 +78,11 @@ int System::SystemSetup()
 
 void System::Run()
 {
-	GLfloat topy = -0.5;
-	GLfloat boty = topy - 0.15;
+
+	GLfloat topy = -0.51;
+	GLfloat boty = topy - 0.12;
 	GLfloat topx = 0.5;
-	GLfloat botx = topx - 0.15;
+	GLfloat botx = topx - (topy - boty)*0.75;
 
 
 	GLfloat verticesHidrante[] =
@@ -113,17 +118,17 @@ void System::Run()
 		 topx, topy, 0.0f,   0.5f, 1.0f, // Top Right
 	};
 
-	GLfloat verticesGrama[] =
+	GLfloat verticasAsfalto[] =
 	{
 		// Positions         // Textures
 
-		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
+		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
 		 1.0f, -1.0f, 0.0f,   0.7f, 0.0f, // Bottom Right
 		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
 
 		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // Bottom Left
-		-1.0f,  1.0f, 0.0f,   0.0f, 4.0f, // Top Left
-		 1.0f,  1.0f, 0.0f,   0.7f, 4.0f, // Top Right
+		-1.0f,  1.0f, 0.0f,   0.0f, 1.0f, // Top Left
+		 1.0f,  1.0f, 0.0f,   0.7f, 1.0f, // Top Right
 	};
 
 	GLfloat verticesBackground[] =
@@ -143,7 +148,7 @@ void System::Run()
 	//
 	coreShader.Use();
 
-	coreShader.LoadTexture("bin/Images/hidrante.png", "texture3", "hidrante");
+	coreShader.LoadTexture("bin/Images/hidranteok.png", "texture3", "hidrante");
 
 
 	GLuint VBOHidrante, VAOHidrante;
@@ -171,7 +176,7 @@ void System::Run()
 	//Carro
 	coreShader.Use();
 
-	coreShader.LoadTexture("bin/Images/carro.png", "texture0", "carro");
+	coreShader.LoadTexture("bin/Images/carrook.png", "texture0", "carro");
 
 
 	GLuint VBOCarro, VAOCarro;
@@ -196,21 +201,21 @@ void System::Run()
 
 
 
-	//Grama
+	//Asfalto
 	coreShader.Use();
 
-	coreShader.LoadTexture("bin/Images/grama.png", "texture1", "grama");
+	coreShader.LoadTexture("bin/Images/camada 2.png", "texture1", "asfalto");
 
 
-	GLuint VBOGrama, VAOGrama;
-	glGenVertexArrays( 1, &VAOGrama );
-	glGenBuffers( 1, &VBOGrama );
+	GLuint VBOAsfalto, VAOAsfalto;
+	glGenVertexArrays( 1, &VAOAsfalto );
+	glGenBuffers( 1, &VBOAsfalto );
 
 	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-	glBindVertexArray( VAOGrama );
+	glBindVertexArray( VAOAsfalto );
 
-	glBindBuffer( GL_ARRAY_BUFFER, VBOGrama );
-	glBufferData( GL_ARRAY_BUFFER, sizeof( verticesGrama ), verticesGrama, GL_STATIC_DRAW );
+	glBindBuffer( GL_ARRAY_BUFFER, VBOAsfalto );
+	glBufferData( GL_ARRAY_BUFFER, sizeof( verticasAsfalto ), verticasAsfalto, GL_STATIC_DRAW );
 
 	// Position attribute
 	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof( GLfloat ), ( GLvoid * ) 0 );
@@ -226,7 +231,7 @@ void System::Run()
 	//Background
 	coreShader.Use();
 
-	coreShader.LoadTexture("bin/Images/background.jpg", "texture2", "background");
+	coreShader.LoadTexture("bin/Images/background.png", "texture2", "background");
 
 
 
@@ -251,7 +256,10 @@ void System::Run()
 	glBindVertexArray(0); // Unbind VAO
 //teste
 
-	GLfloat offsetx[4] = { 0,0,0,0 }, offsety[4] = {0,0,0,0}, z[4] = { 1.0, 1.0,1.0,1.0 }, k=0;
+
+	static double previousSeconds, elapsedSeconds;
+	GLboolean spacePressed = false;
+	GLfloat offsetx[CAMADA_BACKGROUND+1] = { 0,0,0,0 }, offsety[CAMADA_BACKGROUND+1] = {0,0,0,0}, z[CAMADA_BACKGROUND+1] = { 1.0, 1.0,1.0,1.0 }, k=0;
 	while ( !glfwWindowShouldClose( window ) ) {
 
 		glfwPollEvents();
@@ -262,6 +270,44 @@ void System::Run()
 			glfwSetWindowShouldClose( window, GLFW_TRUE );
 		}
 
+		
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !spacePressed) {
+			offsetx[1] = 0.5;
+			previousSeconds = glfwGetTime();
+			spacePressed = true;
+		}
+
+		elapsedSeconds = glfwGetTime() - previousSeconds;
+		if (spacePressed) {
+			if (elapsedSeconds >= 2) {
+				spacePressed = false;
+				offsetx[1] = 0.0;
+				offsety[1] = 0.0;
+			}
+			else {
+				if (elapsedSeconds >= 0.5) {
+					offsety[1] = 0.5;
+					offsetx[1] = 0.5;
+				}
+				else {
+					if (elapsedSeconds >= 0.2) {
+						offsety[1] = 0.75;
+						offsetx[1] = 0.5;
+
+					}
+					else {
+						if (elapsedSeconds >= 0.1) {
+							offsety[1] = 0.25;
+							offsetx[1] = 0.5;
+
+						}
+						else {
+						}
+					}
+				}
+			}
+		}
+
 #pragma endregion
 
 		//glClearColor( 0.2f, 0.3f, 0.3f, 1.0f );
@@ -269,12 +315,14 @@ void System::Run()
 
 
 
-		for (int i = 0; i < 4; i++) {     // Caso necessário ou conforme evento, deslocar camada 
+		for (int i = 0; i < CAMADA_BACKGROUND+1; i++) {     // Caso necessário ou conforme evento, deslocar camada 
 			coreShader.Use();
 			
+
+
 			//Controla a posição do hidrante
-			if (i == 0) {
-				k -= 0.001;
+			if (i == CAMADA_HIDRANTE) {
+				k -= 0.005;
 				glm::mat4 transform = glm::mat4(1.0f);
 				transform = glm::translate(transform, glm::vec3(k, 0.0f, 0.0f));
 				//transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -283,10 +331,12 @@ void System::Run()
 				glUniformMatrix4fv((glGetUniformLocation(coreShader.getProgram(), "matrix")), 1, GL_FALSE, glm::value_ptr(transform));
 
 				//Checa a colisão e caso colidiu volta para o início da tela
-				if ((0.45+k)<=0) {
+				if ((0.45+k)<=0 && (0.45 + k) >= -0.2 && !spacePressed) {
 					k=0.5;
 				}
-
+				if ((0.45 + k) <= -1.0) {
+					k = 0.5;
+				}
 			}
 			else {
 				//Controla a posição dos demais objetos (sempre parados)
@@ -297,24 +347,24 @@ void System::Run()
 			}
 			switch (i)
 			{
-			case 0:
+			case CAMADA_HIDRANTE:
 
 
 				glBindVertexArray(VAOHidrante);
 				offsetx[i] += 0;
 				coreShader.UseTexture("hidrante");
 				break;
-			case 1:
+			case CAMADA_CARRO:
 				glBindVertexArray(VAOCarro);
-				offsetx[i] += 0.5;
+				
 				coreShader.UseTexture("carro");
 				break;
-			case 2:
-				glBindVertexArray(VAOGrama);
+			case CAMADA_ASFALTO:
+				glBindVertexArray(VAOAsfalto);
 				offsetx[i] += 0.001;
-				coreShader.UseTexture("grama");
+				coreShader.UseTexture("asfalto");
 				break;
-			case 3:
+			case CAMADA_BACKGROUND:
 				glBindVertexArray(VAOBackground);
 				offsetx[i] += 0.00005;
 				coreShader.UseTexture("background");
@@ -325,23 +375,13 @@ void System::Run()
 			glUniform1f(      
 				glGetUniformLocation(coreShader.getProgram(), "offsetx"), offsetx[i]);
 		    glUniform1f(      
-				glGetUniformLocation(coreShader.getProgram(), "offsety"), offsetx[i]);
+				glGetUniformLocation(coreShader.getProgram(), "offsety"), offsety[i]);
 			glUniform1f(      
 				glGetUniformLocation(coreShader.getProgram(), "layer_z"), z[i]);
 			glUniform1f(
 				glGetUniformLocation(coreShader.getProgram(), "id"), i);
-			// bind Texture
-			/*
-			coreShader.Use();
-			if (i == 0) {
-				//glActiveTexture(GL_TEXTURE0);
-				coreShader.UseTexture("grama");
-			}
-			else {
-				//glActiveTexture(GL_TEXTURE1);
-				coreShader.UseTexture("background");
-			}
-			*/
+
+
 			glUniform1i(glGetUniformLocation(coreShader.getProgram(), "sprite"), 0);
 			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 			glDrawArrays( GL_TRIANGLES, 0, 6 );
@@ -355,6 +395,7 @@ void System::Run()
 
 
 }
+
 
 void System::Finish()
 {
